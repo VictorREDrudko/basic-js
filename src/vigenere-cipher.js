@@ -20,13 +20,66 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+	constructor(machine = true) {
+    this.machine = machine;
+    this.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  vigenereCiphering(data, key, encrypt) {
+    let count = 0;
+    let res = '';
+
+    for (let i = 0; i < data.length; i++) {
+      const el = data[i].toUpperCase();
+
+      if (this.alphabet.includes(el)) {
+        const elIndex = this.alphabet.indexOf(el);
+        const elKey = key[count % key.length].toUpperCase();
+        const alfa = this.alphabet.indexOf(elKey);
+        let alfaIndex;
+
+				if (encrypt) {
+					alfaIndex = (elIndex + alfa) % 26;
+				} else {
+					alfaIndex = (elIndex - alfa + 26) % 26;
+				}
+
+        res += this.alphabet[alfaIndex];
+        count++;
+      } else {
+        res += el;
+      }
+    }
+
+    return res;
+  }
+
+	parameter(message, key) {
+    if (!message || !key) {
+      throw new Error('Incorrect arguments!');
+    }
+  }
+
+  encrypt(message, key) {
+    this.parameter(message, key);
+    const solve = this.vigenereCiphering(message, key, true);
+
+		if (this.machine) {
+			return solve;
+		} else {
+			return solve.split('').reverse().join('');
+		}
+  }
+
+  decrypt(encMessage, key) {
+    this.parameter(encMessage, key);
+    const solve = this.vigenereCiphering(encMessage, key, false);
+		
+		if (this.machine) {
+			return solve;
+		} else {
+			return solve.split('').reverse().join('');
+		}
   }
 }
 
